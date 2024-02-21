@@ -3,6 +3,8 @@ from manim import *
 import networkx as nx
 
 
+
+
 class GraphNode:
     def __init__(self, data, position=ORIGIN, radius=0.5, neighbors=[], scale=1):
         self.char = data
@@ -170,6 +172,100 @@ class GraphScene(Scene):
                 FadeIn(surround_circle)
             )
         return surround_circle
+
+class Thumbnail(Scene):
+    def construct(self):
+        self.camera.background_color = WHITE
+        pink_nabla = MathTex(r"\nabla", color='#FF90BC').scale(8).move_to(DR*0.1)
+        blue_nabla = MathTex(r"\nabla", color='#6bafd6').scale(8).set_opacity(0.5).move_to(UL*0.1)
+        text_input = input("Título da Thumbnail: ")
+        text = Text(text_input, color=BLACK).move_to(2.5*DOWN).scale(1.5)
+        self.add(pink_nabla, blue_nabla)
+        self.add(text)
+
+
+class LogoData(Scene):
+    def construct(self):
+        self.camera.background_color = WHITE
+        pink_nabla = MathTex(r"\nabla", color='#FF90BC').scale(8)
+        blue_nabla = MathTex(r"\nabla", color='#6bafd6').scale(8).set_opacity(0.5)
+        text = Text('data', color=WHITE).move_to(2.5*DOWN).scale(2)
+        self.play(FadeIn(pink_nabla, blue_nabla))
+        # self.wait()
+        self.play(
+            pink_nabla.animate.move_to(DR*0.1),
+            blue_nabla.animate.move_to(UL*0.1),
+            Write(text)
+        )
+        self.wait()
+        self.play(FadeOut(text, pink_nabla, blue_nabla))
+
+class DataPresentation(Scene):
+    def construct(self):
+        self.camera.background_color = WHITE
+        pink_nabla = MathTex(r"\nabla", color='#FF90BC').scale(8)
+        blue_nabla = MathTex(r"\nabla", color='#6bafd6').scale(8).set_opacity(0.5)
+        text = Text('data', color=WHITE).move_to(2.5*DOWN).scale(2)
+        self.play(FadeIn(pink_nabla, blue_nabla))
+        # self.wait()
+        self.play(
+            pink_nabla.animate.move_to(DR*0.1),
+            blue_nabla.animate.move_to(UL*0.1),
+            Write(text)
+        )
+        self.wait()
+        self.play(FadeOut(text), nabla.animate.to_corner(UL))
+
+        blist = BulletedList("Engenharia de Dados", "Ciência de Dados", "Aprendizado de Máquina", color=BLACK)
+
+        self.play(Write(blist, run_time=6))
+
+        self.wait()
+
+        self.play(FadeOut(blist, nabla))
+
+class FinalData(Scene):
+    def construct(self):
+        self.camera.background_color = WHITE
+        pink_nabla = MathTex(r"\nabla", color='#FF90BC').scale(8).move_to(DR*0.1)
+        blue_nabla = MathTex(r"\nabla", color='#6bafd6').scale(8).set_opacity(0.5).move_to(UL*0.1)
+        nabla = Group(pink_nabla, blue_nabla)
+        text = Text('Obrigado por assistir!', color=BLACK).move_to(2.5*DOWN)
+        # self.play(FadeIn(pink_nabla, blue_nabla))
+        # self.wait()
+        self.play(
+            FadeIn(nabla),
+            Write(text)
+        )
+        self.wait()
+        self.play(FadeOut(text, nabla))
+
+class Pergunta(Scene):
+    def construct(self):
+        self.camera.background_color = WHITE
+        text = Text('Sistemas Complexos', color=BLACK)
+        self.play(Write(text))
+        self.wait(1)
+        self.play(FadeOut(text))
+
+
+class BridgeText(Scene):
+    def construct(self):
+        self.camera.background_color = WHITE
+        myBaseTemplate = TexTemplate(
+            documentclass="\documentclass[preview]{standalone}"
+        )
+        myBaseTemplate.add_to_preamble(r"\usepackage{ragged2e}")
+
+        text = Tex(
+            # "\\justifying{A Ponte Suspensa de Broughton era uma ponte suspensa de corrente de ferro construída em 1826 para atravessar o Rio Irwell entre Broughton e Pendleton, agora em Salford, Grande Manchester, Inglaterra. Uma das primeiras pontes suspensas da Europa, foi atribuída a Samuel Brown, embora alguns sugiram que tenha sido construída por Thomas Cheek Hewes, um fabricante de máquinas têxteis e mecânico de moinhos de Manchester.}",
+            '\\justifying{"Comportamento complexo a partir de regras muito simples."}',
+            tex_template=myBaseTemplate,
+            color=BLACK
+        ).scale(0.8)
+        self.play(FadeIn(text))
+        self.wait(5)
+        self.play(FadeOut(text))
 
 
 class ConceitosBasicos(GraphScene):
@@ -461,6 +557,71 @@ class MedidasBasicas(GraphScene):
         self.play(ReplacementTransform(diameter_eq, diameter_result))
 
         self.wait(2)
-
-
         
+class Kuramoto(GraphScene):
+    purple = '#6532CD'
+    def construct(self):
+        vertices = [1, 2]
+        edges = [(1, 2)]
+        lt = {1: [-3, 0, 0], 2: [3, 0, 0]}
+        g = Graph(vertices, edges, vertex_config={'radius': 0.40}, labels={1: 'J', 2: 'V'}, layout=lt)
+        print(g.edges)
+        for elem in [g[2], g[1], g.edges[(1,2)]]:
+            self.play(Create(elem))
+            self.wait()
+       
+
+        time = 10
+        animation1 = self.create_animation(g[1], 5, 1)
+        animation2 = self.create_animation(g[2], 5, 0.25)
+
+        self.play(animation1, animation2)
+
+        text = Text("'Ei, você pode piscar\num pouco mais devagar?'", font_size=24).next_to(g[1], UP)
+        self.play(animation1, animation2, FadeIn(text))
+
+
+        text2 = Text("'Claro!'", font_size=30).next_to(g[2], UP)
+        animation1 = self.create_animation(g[1], 3, 1)
+        animation2 = self.create_animation(g[2], 3, 0.5)
+        self.play(animation1, animation2, Transform(text, text2))
+
+        text3 = Text("'Você me ajudaria\npiscando mais rápido?'", font_size=30).next_to(g[2], UP)
+        # animation1 = self.create_animation(g[1], 3, 1)
+        # animation1 = self.create_animation(g[2], 3, 0.5)
+        self.play(animation1, animation2, Transform(text, text3))
+
+        animation1 = self.create_animation(g[1], 10, 0.5)
+        animation2 = self.create_animation(g[2], 10, 0.5)
+        self.play(FadeOut(text), animation1, animation2)
+        
+
+        vertices = [1, 2, 3, 4, 5, 6]
+        edges = [(1, 2), (2, 3), (2, 4), (1, 5), (1, 6)]
+        mg = Graph(vertices, edges, vertex_config={'radius': 0.40})
+        bg = Graph.from_networkx(nx.erdos_renyi_graph(20, 0.5), layout="spring", layout_scale=3.5)
+
+        self.play(Transform(g, mg))
+
+        self.wait()
+
+        self.play(Transform(g, bg))
+
+        self.wait()
+
+
+        self.play(FadeOut(g))
+
+    def create_animation(self, dot, total_duration, blink_rate, delay: float = 0):
+
+        dot_copy = dot.copy()
+        dot_copy.color = self.purple
+        num_cycles = int(total_duration // (2*blink_rate))
+        animations = []
+        animations.append(Wait(delay))
+        for _ in range(num_cycles):
+            animations.append(dot_copy.animate(run_time=0).set_opacity(1).build())
+            animations.append(Wait(blink_rate))
+            animations.append(dot_copy.animate(run_time=0).set_opacity(0).build())
+            animations.append(Wait(blink_rate))
+        return Succession(*animations, run_time=total_duration)
